@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
+from .forms import UserCustomChangeForm
 
 # Create your views here.
 def signup(request):
@@ -38,3 +39,21 @@ def logout(request):
     auth_logout(request)
     return redirect('boards:index')
     
+def delete(request):
+    user = request.user
+    if request.method == 'POST':
+        #DELETE
+        user.delete()
+    return redirect('boards:index')
+
+def edit(request):
+    if request.method == 'POST':
+        # 수정 로직 진행
+        form = UserCustomChangeForm(request.POST, instance = request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('boards:index')
+    else:
+        form = UserCustomChangeForm(instance = request.user)
+    context = {'form':form,}
+    return render(request, 'accounts/edit.html', context)
