@@ -5,4 +5,4 @@ class UserCustomChangeForm(UserChangeForm):
     class Meta:
         # https://docs.djangoproject.com/en/2.2/ref/contrib/auth/
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name',]
+        fields = ['email', 'first_name', 'last_name',]
