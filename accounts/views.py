@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, User
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 from .forms import UserCustomChangeForm
 
 # Create your views here.
@@ -19,7 +20,7 @@ def signup(request):
     else:
         form = UserCreationForm()
     context = {'form':form}
-    return render(request, 'accounts/signup.html', context)
+    return render(request, 'accounts/auth_form.html', context)
 
 # 함수 이름이랑 import 한 것이랑 같으므로, import 한 것을 이름 바꾼다.
 def login(request):
@@ -30,10 +31,15 @@ def login(request):
         form = AuthenticationForm(request, request.POST)
         if form.is_valid():
             auth_login(request, form.get_user())
-            return redirect('boards:index')
+            return redirect(request.POST.get('next') or 'boards:index')
+        
+            
     else:
         form = AuthenticationForm()
-    context = {'form' : form}
+    context = {
+        'form' : form,
+        'next' : request.GET.get('next', ''),
+    }
     return render(request, 'accounts/login.html', context)
 
 def logout(request):
@@ -57,7 +63,7 @@ def edit(request):
     else:
         form = UserCustomChangeForm(instance = request.user)
     context = {'form':form,}
-    return render(request, 'accounts/edit.html', context)
+    return render(request, 'accounts/auth_form.html', context)
     
 def change_password(request):
     if request.method == 'POST':
@@ -70,4 +76,4 @@ def change_password(request):
     else:
         form = PasswordChangeForm(request.user)
     context = {'form':form,}
-    return render(request, 'accounts/change_password.html', context)
+    return render(request, 'accounts/auth_form.html', context)
