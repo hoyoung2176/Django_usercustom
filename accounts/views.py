@@ -77,3 +77,7 @@ def change_password(request):
         form = PasswordChangeForm(request.user)
     context = {'form':form,}
     return render(request, 'accounts/auth_form.html', context)
+    
+def profile(request, user_pk):
+    
+    return render(request, "profile.html")
