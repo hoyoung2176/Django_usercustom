@@ -1,0 +1,77 @@
+{% extends 'accounts/base.html' %}
+{% block body %}
+{% load gravatar%}
+<div class="d-flex mb-3 row">
+    <div class = "col-3">
+        <img src="https://s.gravatar.com/avatar/{{ user_info.email|makemd5 }}?s=150" alt="profile img">
+    </div>
+    <div class = "col-9">
+        <h3>{{ user_info.username }}
+            <form action="{% url 'accounts:delete' %}" method="POST" style="display:inline">
+                {% csrf_token %}
+            <input class="btn btn-primary" type="submit" value="팔로우">
+        </form>
+        </h3>
+        <p>게시물 {{ user_info.board_set.all | length }}</p>
+        {% if user == user_info %}
+        <a href="{% url 'accounts:edit' %}">[정보수정]</a>
+        <a href="{% url 'accounts:change_password' %}">[비번변경]</a>
+        <form action="{% url 'accounts:delete' %}" method="POST" style="display:inline">
+            {% csrf_token %}
+            
+            <input type="submit" value="탈퇴"/>
+        </form>
+        
+        {% endif %} 
+    </div>
+     
+</div>
+
+
+
+<div class="row">
+    {% for board in user_info.board_set.all %}
+        <div class="card col-4" style="width: 18rem;">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEH9snNVNcq8Su8k-UXB_gZmfKy3laqXidm_NMrhHd8GXuYpbs" class="card-img-top" alt="이미지가 없습니다." data-toggle="modal" data-target=".bd-example-modal-xl">
+        </div>
+        <div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content col-6">
+                    <div class="col-6"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEH9snNVNcq8Su8k-UXB_gZmfKy3laqXidm_NMrhHd8GXuYpbs" class="card-img-top" alt="이미지가 없습니다."></div>
+                    <div class="col-6">
+                        <h3>{{ user_info.username }}</h3>
+                        <hr>
+                        {{ board.title }}
+                        {{ board.content }}
+                        <hr>
+                        {% for comment in board.comment_set.all %}
+                            <p>{{ comment }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+    {% endfor %}
+</div>
+
+
+
+
+<!--제목 : {# board.title #}-->
+<!--내용 : {# board.content #}-->
+<!--달린 댓글 수 : {# board.comment_set.all.count #}-->
+<!--달린 댓글 수 : {# board.comment_set.all | length #}-->
+
+
+
+
+<!--<h3>{# user_info.username #} 가 작성한 댓글</h3>-->
+<!--{# for comment in user_info.comment_set.all #}-->
+<!--    <div>내용 : {# comment #} - <a href="{# url 'boards:detail' comment.board.pk #}">{# comment.board #}</a></div>-->
+<!--    <hr>-->
+<!--{# endfor #}-->
+
+
+{% endblock %}
